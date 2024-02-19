@@ -1,16 +1,15 @@
 package com.fastcampus.loan.service;
 
 import com.fastcampus.loan.domain.Counsel;
-import com.fastcampus.loan.dto.CounselDTO.Response;
 import com.fastcampus.loan.dto.CounselDTO.Request;
+import com.fastcampus.loan.dto.CounselDTO.Response;
 import com.fastcampus.loan.exception.BaseException;
 import com.fastcampus.loan.exception.ResultType;
 import com.fastcampus.loan.repository.CounselRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class CounselServiceImpl implements CounselService {
 
     @Override
     public Response create(Request request) {
-        Counsel counsel  = modelMapper.map(request, Counsel.class);
+        Counsel counsel = modelMapper.map(request, Counsel.class);
         counsel.setAppliedAt(LocalDateTime.now());
 
         Counsel created = counselRepository.save(counsel);
@@ -41,7 +40,6 @@ public class CounselServiceImpl implements CounselService {
 
     @Override
     public Response update(Long counselId, Request request) {
-
         Counsel counsel = counselRepository.findById(counselId).orElseThrow(() -> {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
@@ -54,6 +52,8 @@ public class CounselServiceImpl implements CounselService {
         counsel.setAddressDetail(request.getAddressDetail());
         counsel.setZipCode(request.getZipCode());
 
+        counselRepository.save(counsel);
+
         return modelMapper.map(counsel, Response.class);
     }
 
@@ -63,7 +63,7 @@ public class CounselServiceImpl implements CounselService {
             throw new BaseException(ResultType.SYSTEM_ERROR);
         });
 
-        counsel.setISDeleted(true);
+        counsel.setIsDeleted(true);
 
         counselRepository.save(counsel);
     }
