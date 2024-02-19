@@ -52,5 +52,26 @@ public class TermsServiceTest {
         assertThat(actual.getTermsDetailUrl()).isSameAs(entity.getTermsDetailUrl());
     }
 
+    @Test
+    void Should_ReturnAllResponseOfExistTermsEntities_When_RequestTermsList() {
+        Terms entityA = Terms.builder()
+                .name("대출 이용 약관 1")
+                .termsDetailUrl("https://abc-storage.acc/dslfjdlsfjlsdddads")
+                .build();
+
+        Terms entityB = Terms.builder()
+                .name("대출 이용 약관 2")
+                .termsDetailUrl("https://abc-storage.acc/dslfjdlsfjlsdweqwq")
+                .build();
+
+        List<Terms> list = new ArrayList<>(Arrays.asList(entityA, entityB));
+
+        when(termsRepository.findAll()).thenReturn(list);
+
+        List<Response> actual = termsService.getAll();
+
+        assertThat(actual.size()).isSameAs(list.size());
+    }
+
 
 }
