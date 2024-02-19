@@ -4,13 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.fastcampus.loan.domain.Counsel;
-import com.fastcampus.loan.dto.CounselDTO;
+import com.fastcampus.loan.dto.CounselDTO.Request;
+import com.fastcampus.loan.dto.CounselDTO.Response;
+import com.fastcampus.loan.exception.BaseException;
+import com.fastcampus.loan.exception.ResultType;
 import com.fastcampus.loan.repository.CounselRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class CounselServiceTest {
@@ -37,7 +43,7 @@ public class CounselServiceTest {
                 .build();
 
 
-        CounselDTO.Request request = CounselDTO.Request.builder()
+        Request request = Request.builder()
                 .name("Member Kim")
                 .cellPhone("010-1111-222")
                 .email("abc@def.g")
@@ -48,12 +54,34 @@ public class CounselServiceTest {
                 .build();
         when(counselRepository.save(ArgumentMatchers.any(Counsel.class))).thenReturn(entity);
 
-        CounselDTO.Response actual = counselService.create(request);
+        Response actual = counselService.create(request);
 
         assertThat(actual.getName()).isSameAs(entity.getName());
+    }
+
+    @Test
+    void Shoud_ReturnResponseOfExistCounselEntity_When_RequestExistCounselId() {
+        Long findId = 1L;
+
+        Counsel entity = Counsel.builder()
+                .counselId(1L)
+                .build();
+
+        when(counselRepository.findById(findId)).thenReturn(Optional.ofNullable(entity));
+
+        Response actual = counselService.get(findId);
+
+        assertThat(actual.getCounselId()).isSameAs(findId);
 
 
     }
 
+    @Test
+    void Shoud_ThrowException_When_RequestNotExistCounselId() {
+        Long findId = 2L;
 
+        when(counselRepository.findById(findId)).thenThrow(new BaseException(ResultType.SYSTEM_ERROR));
+
+        Assertions.assertThrows(BaseException.class, () -> counselService.get(findId));
+    }
 }
