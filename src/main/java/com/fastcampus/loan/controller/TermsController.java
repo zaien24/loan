@@ -27,7 +27,7 @@ public class TermsController extends AbstractController {
         return ok(termsService.getAll());
     }
 
-    
+
 
 
 }

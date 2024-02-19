@@ -1,5 +1,6 @@
 package com.fastcampus.loan.controller;
 
+import com.fastcampus.loan.dto.ApplicationDTO.AcceptTerms;
 import com.fastcampus.loan.dto.ApplicationDTO.Request;
 import com.fastcampus.loan.dto.ApplicationDTO.Response;
 import com.fastcampus.loan.dto.ResponseDTO;
@@ -35,4 +36,8 @@ public class ApplicationController extends AbstractController {
         return ok();
     }
 
+    @PostMapping("/{applicationId}/terms")
+    public ResponseDTO<Boolean> acceptTerms(@PathVariable Long applicationId, @RequestBody AcceptTerms request) {
+        return ok(applicationService.acceptTerms(applicationId, request));
+    }
 }
