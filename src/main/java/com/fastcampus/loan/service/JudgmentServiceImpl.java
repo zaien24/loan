@@ -1,6 +1,8 @@
 package com.fastcampus.loan.service;
 
+import com.fastcampus.loan.domain.Application;
 import com.fastcampus.loan.domain.Judgment;
+import com.fastcampus.loan.dto.ApplicationDTO.GrantAmount;
 import com.fastcampus.loan.dto.JudgmentDTO;
 import com.fastcampus.loan.dto.JudgmentDTO.Response;
 import com.fastcampus.loan.dto.JudgmentDTO.Request;
@@ -11,6 +13,8 @@ import com.fastcampus.loan.repository.JudgmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +86,25 @@ public class JudgmentServiceImpl implements JudgmentService {
         judgment.setIsDeleted(true);
 
         judgmentRepository.save(judgment);
+    }
+
+    @Override
+    public GrantAmount grant(Long judgmentId) {
+        Judgment judgment = judgmentRepository.findById(judgmentId).orElseThrow(() -> {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        });
+
+        Long applicationId = judgment.getApplicationId();
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        });
+
+        BigDecimal approvalAmount = judgment.getApprovalAmount();
+        application.setApprovalAmount(approvalAmount);
+
+        applicationRepository.save(application);
+
+        return modelMapper.map(application, GrantAmount.class);
     }
 
 

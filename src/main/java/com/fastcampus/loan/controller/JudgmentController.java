@@ -1,5 +1,6 @@
 package com.fastcampus.loan.controller;
 
+import com.fastcampus.loan.dto.ApplicationDTO.GrantAmount;
 import com.fastcampus.loan.dto.JudgmentDTO.Request;
 import com.fastcampus.loan.dto.JudgmentDTO.Response;
 import com.fastcampus.loan.dto.ResponseDTO;
@@ -38,5 +39,10 @@ public class JudgmentController extends AbstractController {
     public ResponseDTO<Void> delete(@PathVariable Long judgmentId) {
         judgmentService.delete(judgmentId);
         return ok();
+    }
+
+    @PatchMapping("/{judgmentId}/grants")
+    public ResponseDTO<GrantAmount> grant(@PathVariable Long judgmentId) {
+        return ok(judgmentService.grant(judgmentId));
     }
 }
