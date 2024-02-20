@@ -1,6 +1,7 @@
 package com.fastcampus.loan.service;
 
 import com.fastcampus.loan.domain.Judgment;
+import com.fastcampus.loan.dto.JudgmentDTO;
 import com.fastcampus.loan.dto.JudgmentDTO.Response;
 import com.fastcampus.loan.dto.JudgmentDTO.Request;
 import com.fastcampus.loan.exception.BaseException;
@@ -35,6 +36,29 @@ public class JudgmentServiceImpl implements JudgmentService {
 
         return modelMapper.map(saved, Response.class);
     }
+
+    @Override
+    public Response get(Long judgmentId) {
+        Judgment judgment = judgmentRepository.findById(judgmentId).orElseThrow(() -> {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        });
+
+        return modelMapper.map(judgment, Response.class);
+    }
+
+    @Override
+    public Response getJudgmentOfApplication(Long applicationId) {
+        if (!isPresentApplication(applicationId)) {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        }
+
+        Judgment judgment = judgmentRepository.findByApplicationId(applicationId).orElseThrow(() -> {
+            throw new BaseException(ResultType.SYSTEM_ERROR);
+        });
+
+        return modelMapper.map(judgment, JudgmentDTO.Response.class);
+    }
+
 
     private boolean isPresentApplication(Long applicationId) {
         return applicationRepository.findById(applicationId).isPresent();
