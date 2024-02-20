@@ -5,8 +5,10 @@ import com.fastcampus.loan.dto.ApplicationDTO.Request;
 import com.fastcampus.loan.dto.ApplicationDTO.Response;
 import com.fastcampus.loan.dto.ResponseDTO;
 import com.fastcampus.loan.service.ApplicationService;
+import com.fastcampus.loan.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 public class ApplicationController extends AbstractController {
 
     private final ApplicationService applicationService;
+
+    private final FileStorageService fileStorageService;
 
     @PostMapping
     public ResponseDTO<Response> created(@RequestBody Request request) {
@@ -39,5 +43,11 @@ public class ApplicationController extends AbstractController {
     @PostMapping("/{applicationId}/terms")
     public ResponseDTO<Boolean> acceptTerms(@PathVariable Long applicationId, @RequestBody AcceptTerms request) {
         return ok(applicationService.acceptTerms(applicationId, request));
+    }
+
+    @PostMapping("/files")
+    public ResponseDTO<Void> upload(MultipartFile file) {
+        fileStorageService.save(file);
+        return ok();
     }
 }
