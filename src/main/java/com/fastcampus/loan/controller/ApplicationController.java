@@ -77,4 +77,10 @@ public class ApplicationController extends AbstractController {
         }).collect(Collectors.toList());
         return ok();
     }
+
+    @DeleteMapping("/files")
+    public ResponseDTO<Void> deleteAll() {
+        fileStorageService.deleteAll();
+        return ok();
+    }
 }
